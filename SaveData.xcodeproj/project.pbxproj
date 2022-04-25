@@ -14,6 +14,8 @@
 		21522FC327E904E600F4FB04 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21522FC227E904E600F4FB04 /* Preview Assets.xcassets */; };
 		21B5C0C827EE725B0060AB7F /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B5C0C727EE725B0060AB7F /* CloudKit.framework */; };
 		21DED9C027F05A69006B4922 /* ImageManagerCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */; };
+		21FFA5662815EF6A008974F6 /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */; };
+		21FFA5682815EFEE008974F6 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21FFA5672815EFEE008974F6 /* DataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		2152E61427EA607E004FCEB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		21B5C0C727EE725B0060AB7F /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManagerCloud.swift; sourceTree = "<group>"; };
+		21FFA5652815EF6A008974F6 /* Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data.xcdatamodel; sourceTree = "<group>"; };
+		21FFA5672815EFEE008974F6 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +71,8 @@
 				21522FBD27E904E400F4FB04 /* ContentView.swift */,
 				2150943F27EDB69300DD2084 /* ImageManager.swift */,
 				21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */,
+				21FFA5672815EFEE008974F6 /* DataController.swift */,
+				21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */,
 				21522FBF27E904E600F4FB04 /* Assets.xcassets */,
 				21522FC127E904E600F4FB04 /* Preview Content */,
 			);
@@ -160,7 +166,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				2150944027EDB69300DD2084 /* ImageManager.swift in Sources */,
+				21FFA5682815EFEE008974F6 /* DataController.swift in Sources */,
 				21522FBE27E904E400F4FB04 /* ContentView.swift in Sources */,
+				21FFA5662815EF6A008974F6 /* Data.xcdatamodeld in Sources */,
 				21522FBC27E904E400F4FB04 /* SaveDataApp.swift in Sources */,
 				21DED9C027F05A69006B4922 /* ImageManagerCloud.swift in Sources */,
 			);
@@ -383,6 +391,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				21FFA5652815EF6A008974F6 /* Data.xcdatamodel */,
+			);
+			currentVersion = 21FFA5652815EF6A008974F6 /* Data.xcdatamodel */;
+			path = Data.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 21522FB027E904E400F4FB04 /* Project object */;
 }

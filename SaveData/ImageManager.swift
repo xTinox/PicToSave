@@ -13,18 +13,24 @@ class ImageManager: ObservableObject{
     
     @Published var showPicker = false
     @Published var uiImg: UIImage?
+    var camOrFile: Bool = false
     
+    /*
     func showPhotoPicker() {
         showPicker = true
     }
-    
+    */
+     
+    //
     init(){}
     
+    // Retourne l'image si existante (inutilisee)
     func getImage(imageName: String, folderName:String) -> UIImage? {
         guard let url = getURLForImage(imageName: imageName, folderNa: folderName), FileManager.default.fileExists(atPath: url.path) else {return nil}
         return UIImage(contentsOfFile: url.path)
     }
     
+    // Nommage de l'image (Event+Date)
     func getNameImage(nomEvent: String) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
@@ -33,7 +39,8 @@ class ImageManager: ObservableObject{
         return imageName
     }
     
-    func createFolderSiBesoin(folderName: String){
+    // Creer un dossier si nécessaire
+    func createFolder(folderName: String){
         guard let url = getURLForFolder(folderN: folderName) else {print("Non");return}
         if !FileManager.default.fileExists(atPath: url.path){
         do{
@@ -45,11 +52,13 @@ class ImageManager: ObservableObject{
         }
     }
     
+    // Retourner le PATH du dossier de l'image sur l'iPad
     func getURLForFolder(folderN: String) -> URL? {
         guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {return nil}
         return url.appendingPathComponent(folderN)
     }
     
+    // Retourner le PATH de l'image sur l'iPad
     func getURLForImage(imageName: String, folderNa:String) -> URL?{
         guard let folderURL = getURLForFolder(folderN: folderNa) else {
             return nil
@@ -57,18 +66,20 @@ class ImageManager: ObservableObject{
         return folderURL.appendingPathComponent(imageName + ".jpg")
     }
     
+    // Retourner le PATH du dossier de l'image sur iCloud
     func getURLiCloudForFolder(folderN: String) -> URL? {
         guard let folderURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderN) else {return nil}
         return folderURL
     }
     
+    // Retourner le PATH de l'image sur iCloud
     func getURLiCloudForImage(imageName: String, folderNa:String) -> URL?{
         guard let folderURLiCloud = getURLiCloudForFolder(folderN: folderNa) else {
             return nil
         }
         return folderURLiCloud.appendingPathComponent(imageName + ".jpg")
     }
-    
+    // Creer un dossier sur le répertoire iCloud
     func createiCloudFolder(folderName: String){
         if let iCloudDocumentsURL = getURLiCloudForFolder(folderN: folderName) {
             if (!FileManager.default.fileExists(atPath: iCloudDocumentsURL.path, isDirectory: nil)) {
@@ -83,7 +94,7 @@ class ImageManager: ObservableObject{
             }
         }
     }
-    
+    // Fonction sauvegarder sur l'iPad en physique
     func saveImage(image: UIImage, nomEvent: String,folderName: String){
         let imageName = getNameImage(nomEvent: nomEvent)
         guard
@@ -101,6 +112,7 @@ class ImageManager: ObservableObject{
         }
     }
     
+    // Fonction sauvegarder sur iCloud
     func saveToiCloud(nomEvent: String,folderName: String) {
         
         createiCloudFolder(folderName: folderName)
@@ -134,4 +146,26 @@ class ImageManager: ObservableObject{
         }
     }
     
+    // Match avec une expression régulière sur une String (+ choix du groupe)
+    func matches(for re: String, in text: String, groupe: Int) -> Substring {
+        do{
+            let re = try NSRegularExpression(pattern: re)
+            if let match = re.firstMatch(in: text, range: NSRange(text.startIndex..., in: text)){
+                if let wholeRange = Range(match.range(at: groupe), in:text){
+                    let wholeMatch = text[wholeRange]
+                    return wholeMatch
+                }
+            }
+        } catch {
+            print("erreur")
+            return ""
+        }
+        return ""
+    }
+    
+    /*
+    func camfile(x: Bool){
+        self.camorfile = x
+    }
+    */
 }
