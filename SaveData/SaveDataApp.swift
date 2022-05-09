@@ -13,7 +13,7 @@ struct SaveDataApp: App {
     //@StateObject var vm2 = ImageManagerCloud()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(sc: ScanView())
                 .environmentObject(vm)
                 //.environmentObject(vm2)
         }

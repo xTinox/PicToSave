@@ -8,6 +8,8 @@
 import Foundation
 import SwiftUI
 import UIKit
+import PDFKit
+import VisionKit
 
 class ImageManager: ObservableObject{
     
@@ -66,6 +68,13 @@ class ImageManager: ObservableObject{
         return folderURL.appendingPathComponent(imageName + ".jpg")
     }
     
+    func getURLForImageToPDF(imageName: String, folderNa:String) -> URL?{
+        guard let folderURL = getURLForFolder(folderN: folderNa) else {
+            return nil
+        }
+        return folderURL.appendingPathComponent(imageName + ".pdf")
+    }
+    
     // Retourner le PATH du dossier de l'image sur iCloud
     func getURLiCloudForFolder(folderN: String) -> URL? {
         guard let folderURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderN) else {return nil}
@@ -106,22 +115,22 @@ class ImageManager: ObservableObject{
             print("Fichier sauvegarde")
             try data.write(to: url)
             //saveToiCloud(nomEvent: nomEvent, folderName: folderName)      (1)
-            saveToiCloud(nomEvent: imageName, folderName: folderName)
+            saveToiCloud(nomEvent: imageName, folderName: folderName, format: "jpg")
         } catch{
             print("Erreur sauvegarde")
         }
     }
     
     // Fonction sauvegarder sur iCloud
-    func saveToiCloud(nomEvent: String,folderName: String) {
+    func saveToiCloud(nomEvent: String,folderName: String, format: String) {
         
         createiCloudFolder(folderName: folderName)
         //let nom = getNameImage(nomEvent: nomEvent)                        (1)
         let nom = nomEvent
         
-        guard let localDocumentsURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: .userDomainMask).last?.appendingPathComponent(folderName).appendingPathComponent(nom+".jpg") else { return }
+        guard let localDocumentsURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: .userDomainMask).last?.appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
         
-        guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName).appendingPathComponent(nom+".jpg") else { return }
+        guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
         
         var isDir:ObjCBool = false
         print(localDocumentsURL.path)
@@ -163,9 +172,87 @@ class ImageManager: ObservableObject{
         return ""
     }
     
-    /*
-    func camfile(x: Bool){
-        self.camorfile = x
+    func transformToPDF(images: [UIImage]) -> PDFDocument {
+        let pdfDocument = PDFDocument()
+        for i in images.indices{
+            let pdfPage = PDFPage(image: images[i])
+            pdfDocument.insert(pdfPage!, at: i)
+        }
+        return pdfDocument
     }
-    */
+    
+    func pdfToImage(document: CGPDFDocument ,index: Int) -> UIImage{
+        let page = document.page(at: index)
+        let pageRect = page!.getBoxRect(.mediaBox)
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        let img = renderer.image { ctx in
+            UIColor.white.set()
+            ctx.fill(pageRect)
+            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
+            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
+            ctx.cgContext.drawPDFPage(page!)
+        }
+        return img
+    }
+    
+    func pdfToImages(url: URL) -> [UIImage]? {
+        var images:[UIImage] = []
+        guard let document = CGPDFDocument(url as CFURL) else {return nil}
+        for i in 1...(document.numberOfPages){
+            images.insert(pdfToImage(document: document, index: i), at: i-1)
+        }
+        return images
+    }
+    
+    func saveAsPDF(images: [UIImage], nomEvent: String, folderName: String){
+        let imageName = getNameImage(nomEvent: nomEvent)
+        let pdfDocument = transformToPDF(images: images)
+        let data = pdfDocument.dataRepresentation()
+        let url = getURLForImageToPDF(imageName: imageName, folderNa: folderName)
+        print("Fichier sauvegarde")
+        do {
+            try data!.write(to: url!)
+            saveToiCloud(nomEvent: imageName, folderName: folderName, format: "pdf")
+        }
+        catch {
+            print("Erreur PDF")
+        }
+    }
+}
+
+
+final class ScanView: NSObject, ObservableObject {
+    
+    @Published var errorMessage: String?
+    @Published var imageArray: [UIImage] = []
+    
+    func getDocumentCameraViewController() -> VNDocumentCameraViewController {
+        let vc = VNDocumentCameraViewController()
+        vc.delegate = self
+        return vc
+    }
+    
+    func removeImage(image: UIImage) {
+        imageArray.removeAll{$0 == image}
+    }
+}
+
+
+extension ScanView: VNDocumentCameraViewControllerDelegate {
+    
+    func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+      
+    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
+        errorMessage = error.localizedDescription
+    }
+      
+    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
+      print("Did Finish With Scan.")
+        for i in 0..<scan.pageCount {
+            self.imageArray.append(scan.imageOfPage(at:i))
+        }
+        controller.dismiss(animated: true, completion: nil)
+    }
 }
