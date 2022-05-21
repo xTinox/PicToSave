@@ -3,11 +3,11 @@
     <entity name="Event" representedClassName="Event" syncable="YES" codeGenerationType="class">
         <attribute name="event" optional="YES" attributeType="String"/>
     </entity>
-    <entity name="Type" representedClassName="Type" syncable="YES" codeGenerationType="class">
+    <entity name="Types" representedClassName="Types" syncable="YES" codeGenerationType="class">
         <attribute name="type" optional="YES" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Type" positionX="-54" positionY="-9" width="128" height="44"/>
         <element name="Event" positionX="-36" positionY="18" width="128" height="44"/>
+        <element name="Types" positionX="-54" positionY="-9" width="128" height="44"/>
     </elements>
 </model>

@@ -11,6 +11,7 @@ import SwiftUI
 struct SaveDataApp: App {
     @StateObject var vm = ImageManager()
     //@StateObject var vm2 = ImageManagerCloud()
+    let recentsFiles = "0-RecentsFiles"
     var body: some Scene {
         WindowGroup {
             ContentView(sc: ScanView())

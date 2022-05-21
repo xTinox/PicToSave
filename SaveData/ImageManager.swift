@@ -16,21 +16,11 @@ class ImageManager: ObservableObject{
     @Published var showPicker = false
     @Published var uiImg: UIImage?
     var camOrFile: Bool = false
-    
-    /*
-    func showPhotoPicker() {
-        showPicker = true
-    }
-    */
+    let rootFolder = "Doc"
+    let recentsFiles = "0-RecentsFiles"
      
     //
     init(){}
-    
-    // Retourne l'image si existante (inutilisee)
-    func getImage(imageName: String, folderName:String) -> UIImage? {
-        guard let url = getURLForImage(imageName: imageName, folderNa: folderName), FileManager.default.fileExists(atPath: url.path) else {return nil}
-        return UIImage(contentsOfFile: url.path)
-    }
     
     // Nommage de l'image (Event+Date)
     func getNameImage(nomEvent: String) -> String {
@@ -41,9 +31,20 @@ class ImageManager: ObservableObject{
         return imageName
     }
     
+    // Retourner le PATH du dossier de l'image sur l'iPad
+    func getURLForFolder(folderN: String, racine: String? = nil) -> URL? {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {return nil}
+        if (racine==nil){
+            return url.appendingPathComponent(folderN)
+        }
+        else{
+            return url.appendingPathComponent(racine!).appendingPathComponent(folderN)
+        }
+    }
+    
     // Creer un dossier si nécessaire
-    func createFolder(folderName: String){
-        guard let url = getURLForFolder(folderN: folderName) else {print("Non");return}
+    func createFolder(folderName: String, racine: String? = nil){
+        guard let url = getURLForFolder(folderN: folderName,racine: racine) else {print("Non");return}
         if !FileManager.default.fileExists(atPath: url.path){
         do{
             try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
@@ -54,22 +55,28 @@ class ImageManager: ObservableObject{
         }
     }
     
-    // Retourner le PATH du dossier de l'image sur l'iPad
-    func getURLForFolder(folderN: String) -> URL? {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {return nil}
-        return url.appendingPathComponent(folderN)
+    // Retourne l'image si existante (inutilisee)
+    func getImage(imageName: String, folderName:String) -> UIImage? {
+        guard let url = getURLForImage(imageName: imageName, folderNa: folderName), FileManager.default.fileExists(atPath: url.path) else {return nil}
+        return UIImage(contentsOfFile: url.path)
     }
     
     // Retourner le PATH de l'image sur l'iPad
     func getURLForImage(imageName: String, folderNa:String) -> URL?{
-        guard let folderURL = getURLForFolder(folderN: folderNa) else {
+        guard let folderURL = getURLForFolder(folderN: folderNa, racine: rootFolder) else {
             return nil
         }
         return folderURL.appendingPathComponent(imageName + ".jpg")
     }
     
     func getURLForImageToPDF(imageName: String, folderNa:String) -> URL?{
-        guard let folderURL = getURLForFolder(folderN: folderNa) else {
+        guard let folderURL = getURLForFolder(folderN: folderNa, racine: rootFolder) else {
+            return nil
+        }
+        return folderURL.appendingPathComponent(imageName + ".pdf")
+    }
+    func getURLForImageToPDFinRecent(imageName: String) -> URL?{
+        guard let folderURL = getURLForFolder(folderN: recentsFiles) else {
             return nil
         }
         return folderURL.appendingPathComponent(imageName + ".pdf")
@@ -124,13 +131,15 @@ class ImageManager: ObservableObject{
     // Fonction sauvegarder sur iCloud
     func saveToiCloud(nomEvent: String,folderName: String, format: String) {
         
-        createiCloudFolder(folderName: folderName)
+        //createiCloudFolder(folderName: folderName)
+        
         //let nom = getNameImage(nomEvent: nomEvent)                        (1)
-        let nom = nomEvent
         
-        guard let localDocumentsURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: .userDomainMask).last?.appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
+        guard let localDocumentsURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: .userDomainMask).last?.appendingPathComponent(rootFolder).appendingPathComponent(folderName).appendingPathComponent(nomEvent+"."+format) else { return }
         
-        guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
+        //guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
+        
+        guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName+"-"+nomEvent+"."+format) else { return }
         
         var isDir:ObjCBool = false
         print(localDocumentsURL.path)
@@ -205,54 +214,21 @@ class ImageManager: ObservableObject{
     }
     
     func saveAsPDF(images: [UIImage], nomEvent: String, folderName: String){
+        createFolder(folderName: recentsFiles)
+        createFolder(folderName: folderName, racine: rootFolder)
         let imageName = getNameImage(nomEvent: nomEvent)
         let pdfDocument = transformToPDF(images: images)
         let data = pdfDocument.dataRepresentation()
         let url = getURLForImageToPDF(imageName: imageName, folderNa: folderName)
+        let recentsURL = getURLForImageToPDFinRecent(imageName: folderName+"-"+imageName)
         print("Fichier sauvegarde")
         do {
             try data!.write(to: url!)
+            try data!.write(to: recentsURL!)
             saveToiCloud(nomEvent: imageName, folderName: folderName, format: "pdf")
         }
         catch {
             print("Erreur PDF")
         }
-    }
-}
-
-
-final class ScanView: NSObject, ObservableObject {
-    
-    @Published var errorMessage: String?
-    @Published var imageArray: [UIImage] = []
-    
-    func getDocumentCameraViewController() -> VNDocumentCameraViewController {
-        let vc = VNDocumentCameraViewController()
-        vc.delegate = self
-        return vc
-    }
-    
-    func removeImage(image: UIImage) {
-        imageArray.removeAll{$0 == image}
-    }
-}
-
-
-extension ScanView: VNDocumentCameraViewControllerDelegate {
-    
-    func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
-        controller.dismiss(animated: true, completion: nil)
-    }
-      
-    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
-        errorMessage = error.localizedDescription
-    }
-      
-    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-      print("Did Finish With Scan.")
-        for i in 0..<scan.pageCount {
-            self.imageArray.append(scan.imageOfPage(at:i))
-        }
-        controller.dismiss(animated: true, completion: nil)
     }
 }
