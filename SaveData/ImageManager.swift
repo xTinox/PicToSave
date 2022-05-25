@@ -10,16 +10,17 @@ import SwiftUI
 import UIKit
 import PDFKit
 import VisionKit
+import EventKit
+import EventKitUI
 
 class ImageManager: ObservableObject{
     
     @Published var showPicker = false
     @Published var uiImg: UIImage?
     var camOrFile: Bool = false
-    let rootFolder = "Doc"
-    let recentsFiles = "0-RecentsFiles"
+    let rootFolder = "Dossiers"
+    let recentsFiles = "Fichiers_Recents"
      
-    //
     init(){}
     
     // Nommage de l'image (Event+Date)
@@ -69,12 +70,15 @@ class ImageManager: ObservableObject{
         return folderURL.appendingPathComponent(imageName + ".jpg")
     }
     
+    // Retourne le PATH du document PDF
     func getURLForImageToPDF(imageName: String, folderNa:String) -> URL?{
         guard let folderURL = getURLForFolder(folderN: folderNa, racine: rootFolder) else {
             return nil
         }
         return folderURL.appendingPathComponent(imageName + ".pdf")
     }
+    
+    // Retourne le PATH de l'image situé dans le dossier des fichiers récents
     func getURLForImageToPDFinRecent(imageName: String) -> URL?{
         guard let folderURL = getURLForFolder(folderN: recentsFiles) else {
             return nil
@@ -104,8 +108,7 @@ class ImageManager: ObservableObject{
                     try FileManager.default.createDirectory(at: iCloudDocumentsURL, withIntermediateDirectories: true, attributes: nil)
                 }
                 catch {
-                    //Error handling
-                    print("Error in creating doc")
+                    print("Erreur : Création du dossier iCloud")
                 }
             }
         }
@@ -131,13 +134,7 @@ class ImageManager: ObservableObject{
     // Fonction sauvegarder sur iCloud
     func saveToiCloud(nomEvent: String,folderName: String, format: String) {
         
-        //createiCloudFolder(folderName: folderName)
-        
-        //let nom = getNameImage(nomEvent: nomEvent)                        (1)
-        
         guard let localDocumentsURL = FileManager.default.urls(for: FileManager.SearchPathDirectory.documentDirectory, in: .userDomainMask).last?.appendingPathComponent(rootFolder).appendingPathComponent(folderName).appendingPathComponent(nomEvent+"."+format) else { return }
-        
-        //guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName).appendingPathComponent(nom+"."+format) else { return }
         
         guard let iCloudDocumentsURL = FileManager.default.url(forUbiquityContainerIdentifier: nil)?.appendingPathComponent("Documents").appendingPathComponent(folderName+"-"+nomEvent+"."+format) else { return }
         
@@ -149,8 +146,7 @@ class ImageManager: ObservableObject{
                 try FileManager.default.removeItem(at: iCloudDocumentsURL)
             }
             catch {
-                //Error handling
-                print("Error in remove item")
+                print("Erreur : Impossible de supprimer le fichier à remplacer")
             }
         }
         
@@ -158,9 +154,7 @@ class ImageManager: ObservableObject{
             try FileManager.default.copyItem(at: localDocumentsURL, to: iCloudDocumentsURL)
         }
         catch {
-            //Error handling
-            print("Error in copy item")
-            print(error)
+            print("Erreur : Copie du fichier")
         }
     }
     
@@ -175,12 +169,13 @@ class ImageManager: ObservableObject{
                 }
             }
         } catch {
-            print("erreur")
+            print("Erreur du match avec l'expression régulière")
             return ""
         }
         return ""
     }
     
+    // Transforme une liste d'UIImages en document PDF
     func transformToPDF(images: [UIImage]) -> PDFDocument {
         let pdfDocument = PDFDocument()
         for i in images.indices{
@@ -190,6 +185,7 @@ class ImageManager: ObservableObject{
         return pdfDocument
     }
     
+    // Transforme la page 'index' du document PDF en UIImage
     func pdfToImage(document: CGPDFDocument ,index: Int) -> UIImage{
         let page = document.page(at: index)
         let pageRect = page!.getBoxRect(.mediaBox)
@@ -204,6 +200,7 @@ class ImageManager: ObservableObject{
         return img
     }
     
+    // Transforme la totalité d'un document PDF en liste d'UIImages
     func pdfToImages(url: URL) -> [UIImage]? {
         var images:[UIImage] = []
         guard let document = CGPDFDocument(url as CFURL) else {return nil}
@@ -213,14 +210,16 @@ class ImageManager: ObservableObject{
         return images
     }
     
-    func saveAsPDF(images: [UIImage], nomEvent: String, folderName: String){
+    // Sauvegarder la liste d'UIImages en document PDF dans les fichiers récents et dans le dossier du type
+    func saveAsPDF(images: [UIImage], nomEvent: String, folderName: String, calendars: Set<EKCalendar>){
         createFolder(folderName: recentsFiles)
         createFolder(folderName: folderName, racine: rootFolder)
-        let imageName = getNameImage(nomEvent: nomEvent)
+        let imageName = getNameImage(nomEvent: nomEvent + listToString(from: calendars))
         let pdfDocument = transformToPDF(images: images)
         let data = pdfDocument.dataRepresentation()
         let url = getURLForImageToPDF(imageName: imageName, folderNa: folderName)
         let recentsURL = getURLForImageToPDFinRecent(imageName: folderName+"-"+imageName)
+        print(imageName)
         print("Fichier sauvegarde")
         do {
             try data!.write(to: url!)
@@ -230,5 +229,52 @@ class ImageManager: ObservableObject{
         catch {
             print("Erreur PDF")
         }
+    }
+    
+    func listToString(from list: Set<EKCalendar>) -> String {
+        var res : String = "!"
+        for element in list {
+            res += element.description + ","
+        }
+        res = String(res.dropLast())
+        //print(res)
+        return res
+    }
+    
+    
+    //Fonction pour recup les calendriers
+    func requestAccessCal() -> [String:EKEvent] {
+        let store = EKEventStore()
+        var events = [EKEvent()]
+
+
+        store.requestAccess(to: .event) { (granted, error) in
+            if granted {
+                DispatchQueue.main.async {
+                    let minute:TimeInterval = 60.0
+                    let mtn = Date().advanced(by: minute)
+                    let predicate = store.predicateForEvents(withStart: Date(), end: mtn, calendars: nil)
+                    events = store.events(matching: predicate)
+                }
+            }
+        }
+        
+        var Evenements = [String:EKEvent]()
+        for e in events {
+            Evenements[e.calendarItemExternalIdentifier] = e
+        }
+        
+        
+        return Evenements
+    }
+    
+    func getCal() -> [String] {
+        
+        var pickerCal: [String] = []
+        for (index, _)  in requestAccessCal() {
+            pickerCal.append(index)
+        }
+        //return pickerCal
+        return []
     }
 }

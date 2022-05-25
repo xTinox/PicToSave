@@ -7,18 +7,18 @@
 
 import SwiftUI
 
+// Main de l'application
 @main
 struct SaveDataApp: App {
     @StateObject var vm = ImageManager()
-    //@StateObject var vm2 = ImageManagerCloud()
-    let recentsFiles = "0-RecentsFiles"
+    @StateObject var cal = CalendarsResource()
     var body: some Scene {
+        // Fenetre Principale affichée au démarrage
         WindowGroup {
-            ContentView(sc: ScanView())
+            ContentView(sc: ScanView(), calendars: $cal.selectedCalendars)
                 .environmentObject(vm)
-                //.environmentObject(vm2)
+                .environmentObject(cal)
         }
     }
 }
-
 

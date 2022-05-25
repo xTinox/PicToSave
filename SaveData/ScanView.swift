@@ -10,6 +10,8 @@ import UIKit
 import Foundation
 import VisionKit
 
+// Classe de l'API VisionKit
+
 final class ScanView: NSObject, ObservableObject {
     
     @Published var errorMessage: String?

@@ -12,13 +12,12 @@
 		21522FBE27E904E400F4FB04 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21522FBD27E904E400F4FB04 /* ContentView.swift */; };
 		21522FC027E904E600F4FB04 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21522FBF27E904E600F4FB04 /* Assets.xcassets */; };
 		21522FC327E904E600F4FB04 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 21522FC227E904E600F4FB04 /* Preview Assets.xcassets */; };
-		2169618728297CF7007D54E0 /* CaptureImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2169618628297CF7007D54E0 /* CaptureImageView.swift */; };
 		2169618928297D97007D54E0 /* ScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2169618828297D97007D54E0 /* ScanView.swift */; };
-		21814F182820643000522E9D /* ScanDocuments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21814F172820643000522E9D /* ScanDocuments.swift */; };
+		21B2D260283E912D0039E9D6 /* CalendarRessources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B2D25F283E912D0039E9D6 /* CalendarRessources.swift */; };
+		21B2D262283E91330039E9D6 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B2D261283E91330039E9D6 /* CalendarView.swift */; };
+		21B2D264283E91450039E9D6 /* ErrorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B2D263283E91450039E9D6 /* ErrorManager.swift */; };
+		21B2D266283E91500039E9D6 /* ViewUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21B2D265283E91500039E9D6 /* ViewUtils.swift */; };
 		21B5C0C827EE725B0060AB7F /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 21B5C0C727EE725B0060AB7F /* CloudKit.framework */; };
-		21DED9C027F05A69006B4922 /* ImageManagerCloud.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */; };
-		21FFA5662815EF6A008974F6 /* Data.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */; };
-		21FFA5682815EFEE008974F6 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21FFA5672815EFEE008974F6 /* DataController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,13 +29,12 @@
 		21522FBF27E904E600F4FB04 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		21522FC227E904E600F4FB04 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152E61427EA607E004FCEB8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		2169618628297CF7007D54E0 /* CaptureImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureImageView.swift; sourceTree = "<group>"; };
 		2169618828297D97007D54E0 /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
-		21814F172820643000522E9D /* ScanDocuments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanDocuments.swift; sourceTree = "<group>"; };
+		21B2D25F283E912D0039E9D6 /* CalendarRessources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarRessources.swift; sourceTree = "<group>"; };
+		21B2D261283E91330039E9D6 /* CalendarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		21B2D263283E91450039E9D6 /* ErrorManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorManager.swift; sourceTree = "<group>"; };
+		21B2D265283E91500039E9D6 /* ViewUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewUtils.swift; sourceTree = "<group>"; };
 		21B5C0C727EE725B0060AB7F /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManagerCloud.swift; sourceTree = "<group>"; };
-		21FFA5652815EF6A008974F6 /* Data.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Data.xcdatamodel; sourceTree = "<group>"; };
-		21FFA5672815EFEE008974F6 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,11 +75,10 @@
 				21522FBD27E904E400F4FB04 /* ContentView.swift */,
 				2150943F27EDB69300DD2084 /* ImageManager.swift */,
 				2169618828297D97007D54E0 /* ScanView.swift */,
-				21FFA5672815EFEE008974F6 /* DataController.swift */,
-				21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */,
-				2169618628297CF7007D54E0 /* CaptureImageView.swift */,
-				21814F172820643000522E9D /* ScanDocuments.swift */,
-				21DED9BF27F05A69006B4922 /* ImageManagerCloud.swift */,
+				21B2D261283E91330039E9D6 /* CalendarView.swift */,
+				21B2D25F283E912D0039E9D6 /* CalendarRessources.swift */,
+				21B2D263283E91450039E9D6 /* ErrorManager.swift */,
+				21B2D265283E91500039E9D6 /* ViewUtils.swift */,
 				21522FBF27E904E600F4FB04 /* Assets.xcassets */,
 				21522FC127E904E600F4FB04 /* Preview Content */,
 			);
@@ -174,15 +171,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21B2D260283E912D0039E9D6 /* CalendarRessources.swift in Sources */,
 				2150944027EDB69300DD2084 /* ImageManager.swift in Sources */,
-				21FFA5682815EFEE008974F6 /* DataController.swift in Sources */,
+				21B2D264283E91450039E9D6 /* ErrorManager.swift in Sources */,
+				21B2D262283E91330039E9D6 /* CalendarView.swift in Sources */,
 				21522FBE27E904E400F4FB04 /* ContentView.swift in Sources */,
-				21FFA5662815EF6A008974F6 /* Data.xcdatamodeld in Sources */,
 				21522FBC27E904E400F4FB04 /* SaveDataApp.swift in Sources */,
+				21B2D266283E91500039E9D6 /* ViewUtils.swift in Sources */,
 				2169618928297D97007D54E0 /* ScanView.swift in Sources */,
-				21814F182820643000522E9D /* ScanDocuments.swift in Sources */,
-				21DED9C027F05A69006B4922 /* ImageManagerCloud.swift in Sources */,
-				2169618728297CF7007D54E0 /* CaptureImageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +317,7 @@
 				INFOPLIST_FILE = SaveData/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PicToSave;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Autorisez l'utilisation de la caméra s'il vous plaît :)";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Autorisez l'utilisation de la caméra s'il vous plaît";
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -360,7 +356,7 @@
 				INFOPLIST_FILE = SaveData/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = PicToSave;
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
-				INFOPLIST_KEY_NSCameraUsageDescription = "Autorisez l'utilisation de la caméra s'il vous plaît :)";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Autorisez l'utilisation de la caméra s'il vous plaît";
 				INFOPLIST_KEY_NSDocumentsFolderUsageDescription = "";
 				INFOPLIST_KEY_NSFileProviderDomainUsageDescription = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -405,19 +401,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		21FFA5642815EF6A008974F6 /* Data.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				21FFA5652815EF6A008974F6 /* Data.xcdatamodel */,
-			);
-			currentVersion = 21FFA5652815EF6A008974F6 /* Data.xcdatamodel */;
-			path = Data.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 21522FB027E904E400F4FB04 /* Project object */;
 }
